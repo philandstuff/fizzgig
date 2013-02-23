@@ -15,3 +15,15 @@ END
     define.instantiate('foobar').should contain_file('/etc/foobar')
   end
 end
+
+HERE = File.expand_path(File.dirname(__FILE__))
+describe Zippy do
+  it 'should test a define from a module' do
+    Puppet[:manifestdir] = File.join(HERE,'manifests')
+    Puppet[:modulepath] = File.join(HERE,'modules')
+    Puppet[:ignoreimport] = nil
+    instance_code = %q[nginx::site {'foo':}]
+    instance = Zippy.instantiate(instance_code)
+    instance.should contain_file('/etc/nginx/sites-enabled/foo')
+  end
+end

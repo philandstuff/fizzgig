@@ -19,6 +19,16 @@ module Zippy
       compiler.catalog.resources
     end
   end
+
+  def self.instantiate(code)
+    Puppet.settings[:ignoreimport] = nil
+    compiler = Puppet::Parser::Compiler.new(Puppet::Node.new('localhost'))
+    parser = Puppet::Parser::Parser.new compiler.environment.name
+    ast = parser.parse(code)
+    resources = ast.code[0].evaluate(compiler.topscope)
+    resources[0].evaluate
+    compiler.catalog.resources
+  end
 end
 
 RSpec::Matchers.define :contain_file do |title|
