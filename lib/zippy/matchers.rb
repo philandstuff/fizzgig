@@ -10,10 +10,8 @@ module Zippy
         @referenced_type = expected_type.capitalize
       end
 
-      def matches?(actual)
-        resource = actual.find do |resource|
-          resource.type == @referenced_type && resource.name == @expected_title
-        end
+      def matches?(catalog)
+        resource = catalog.resource(@referenced_type,@expected_title)
         if resource then
           (@expected_params || {}).all? do |name,expected_val|
             resource[name] == expected_val

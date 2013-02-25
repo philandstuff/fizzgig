@@ -10,9 +10,8 @@ module Zippy
     ast = parser.parse(code)
     resources = ast.code[0].evaluate(compiler.topscope)
     resources[0].evaluate
-    compiler.catalog.resources
+    compiler.catalog
   end
-
 end
 
 RSpec.configure do |c|
