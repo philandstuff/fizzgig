@@ -50,10 +50,15 @@ module Zippy
         end
       end
 
-      def with_ensure(expected_value)
-        @expected_params ||= {}
-        @expected_params['ensure'] = expected_value
-        self
+      def method_missing(method, *args, &block)
+        if method.to_s =~ /^with_/
+          param = method.to_s.gsub(/^with_/,'')
+          @expected_params ||= {}
+          @expected_params[param] = args[0]
+          self
+        else
+          super
+        end
       end
     end
   end
