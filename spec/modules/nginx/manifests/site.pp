@@ -3,4 +3,5 @@ define nginx::site () {
     ensure => present,
     mode   => 0440,
   }
+  notify{'different resource type':}
 }

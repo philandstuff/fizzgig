@@ -23,5 +23,6 @@ describe Zippy do
     instance.should contain_file('/etc/nginx/sites-enabled/foo').
       with_ensure('present').
       with_mode('0440')
+    instance.should contain_notify('different resource type')
   end
 end
