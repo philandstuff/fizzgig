@@ -5,6 +5,8 @@ module Zippy
   def self.instantiate(code)
     Puppet[:manifestdir] = RSpec.configuration.manifest_dir
     Puppet[:modulepath] = RSpec.configuration.module_path
+    # stop template() fn from complaining about missing vardir config
+    Puppet[:templatedir] = ""
     compiler = Puppet::Parser::Compiler.new(Puppet::Node.new('localhost'))
     parser = Puppet::Parser::Parser.new compiler.environment.name
     ast = parser.parse(code)
