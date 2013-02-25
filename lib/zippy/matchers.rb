@@ -11,10 +11,15 @@ module Zippy
       end
 
       def matches?(catalog)
+        @catalog = catalog
         resource = catalog.resource(@referenced_type,@expected_title)
         if resource then
           (@expected_params || {}).all? do |name,expected_val|
-            resource[name] == expected_val
+            if expected_val.kind_of?(Regexp)
+              resource[name] =~ expected_val
+            else
+              resource[name] == expected_val
+            end
           end
         else
           false
@@ -26,7 +31,9 @@ module Zippy
         if @expected_params
           param_string = " with parameters #{@expected_params.inspect}"
         end
-        "expected the catalog to contain #{@referenced_type}[#{@expected_title}]#{param_string}"
+        possible_resource = @catalog.resource(@referenced_type,@expected_title)
+        actual = possible_resource ? possible_resource.inspect : "the catalog"
+        "expected #{actual} to contain #{@referenced_type}[#{@expected_title}]#{param_string}"
       end
 
       def method_missing(method, *args, &block)
