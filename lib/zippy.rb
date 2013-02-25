@@ -31,12 +31,30 @@ module Zippy
     resources[0].evaluate
     compiler.catalog.resources
   end
-end
 
-RSpec::Matchers.define :contain_file do |title|
-  match do |actual|
-    actual.find do |resource|
-      resource.type == 'File' && resource.name == title
+  module CatalogMatchers
+    extend RSpec::Matchers::DSL
+
+    matcher :contain_file do |expected_title|
+      match do |actual|
+        resource = actual.find do |resource|
+          resource.type == 'File' && resource.name == expected_title
+        end
+        @expected_params ||= {}
+        if resource then
+          @expected_params.all? do |name,expected_val|
+            resource[name] == expected_val
+          end
+        else
+          false
+        end
+      end
+
+      def with_ensure(expected_value)
+        @expected_params ||= {}
+        @expected_params['ensure'] = expected_value
+        self
+      end
     end
   end
 end
@@ -44,6 +62,8 @@ end
 RSpec.configure do |c|
   c.add_setting :module_path, :default => '/etc/puppet/modules'
   c.add_setting :manifest_dir, :default => nil
+
+  c.include Zippy::CatalogMatchers
   # FIXME: decide if these are needed
   #c.add_setting :manifest, :default => nil
   #c.add_setting :template_dir, :default => nil
