@@ -5,4 +5,5 @@ define nginx::site () {
     content => template('nginx/vhost.erb'),
   }
   notify{'different resource type':}
+  nginx::wibble{'foo':}
 }

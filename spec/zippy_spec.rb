@@ -22,4 +22,10 @@ describe Zippy do
     instance.should contain_file('/etc/nginx/sites-enabled/foo').
       with_content(/server_name foo;/)
   end
+
+  it 'should test presence of namespaced type' do
+    instance_code = %q[nginx::site {'foo':}]
+    instance = Zippy.instantiate(instance_code)
+    instance.should contain_nginx__wibble('foo')
+  end
 end

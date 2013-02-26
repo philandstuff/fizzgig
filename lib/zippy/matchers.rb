@@ -7,7 +7,7 @@ module Zippy
       def initialize(expected_type,expected_title)
         @expected_type = expected_type
         @expected_title = expected_title
-        @referenced_type = expected_type.capitalize
+        @referenced_type = referenced_type(expected_type)
       end
 
       def matches?(catalog)
@@ -45,6 +45,12 @@ module Zippy
         else
           super
         end
+      end
+
+      private
+
+      def referenced_type(type)
+        type.split('__').map { |r| r.capitalize }.join('::')
       end
     end
 
