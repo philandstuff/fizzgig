@@ -28,4 +28,9 @@ describe Zippy do
     instance = Zippy.instantiate(instance_code)
     instance.should contain_nginx__wibble('foo')
   end
+
+  it 'should test classes' do
+    catalog = Zippy.include 'webapp'
+    catalog.should contain_nginx__site('webapp')
+  end
 end
