@@ -22,7 +22,12 @@ module Zippy
     Puppet[:templatedir] = ""
     compiler = Puppet::Parser::Compiler.new(Puppet::Node.new('localhost'))
     parser = Puppet::Parser::Parser.new compiler.environment.name
-    scope = Puppet::Parser::Scope.new(compiler)
+    scope = nil
+    if Puppet::PUPPETVERSION =~ /^3./
+      scope = Puppet::Parser::Scope.new(compiler)
+    else
+      scope = Puppet::Parser::Scope.new(:compiler => compiler)
+    end
     scope.source = Puppet::Resource::Type.new(:node,'localhost')
     scope.parent = compiler.topscope
     ast = parser.parse("include #{klass}")
