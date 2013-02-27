@@ -1,6 +1,5 @@
 require 'puppet'
 require 'zippy/matchers'
-require 'zippy/function_stubs'
 
 module Zippy
   def self.instantiate(code)
@@ -34,14 +33,6 @@ end
 
 RSpec.configure do |c|
   c.add_setting :modulepath, :default => '/etc/puppet/modules'
-
-  c.before(:each) do
-    Thread.current[:spec] = self
-  end
-
-  c.after(:each) do
-    Thread.current[:spec] = nil
-  end
 
   # FIXME: decide if these are needed
   #c.add_setting :manifestdir, :default => nil
