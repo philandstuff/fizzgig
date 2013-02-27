@@ -30,6 +30,20 @@ module Zippy
     compiler.catalog
   end
 
+  module FunctionStubs
+    def self.has_stub?(fname,args)
+      spec = Thread.current[:spec]
+      spec &&
+        spec.respond_to?(:function_stubs) &&
+        spec.function_stubs.has_key?(fname.to_sym) &&
+        spec.function_stubs[fname.to_sym][args[0]]
+    end
+
+    def self.get_stub(fname,args)
+      spec = Thread.current[:spec]
+      spec.function_stubs[fname.to_sym][args[0]]
+    end
+  end
 end
 
 module Puppet::Parser::Functions
@@ -41,9 +55,8 @@ module Puppet::Parser::Functions
       orig_fname = "orig_function_#{name}"
       environment_module.send(:alias_method, orig_fname.to_sym, real_fname.to_sym)
       environment_module.send(:define_method, real_fname) do |args|
-        spec = Thread.current[:spec]
-        if spec && spec.respond_to?(:function_stubs) && spec.function_stubs.has_key?(name.to_sym)
-          spec.function_stubs[name.to_sym][args[0]]
+        if Zippy::FunctionStubs.has_stub?(name,args)
+          Zippy::FunctionStubs.get_stub(name,args)
         else
           self.send(orig_fname, args)
         end
