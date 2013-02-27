@@ -33,4 +33,15 @@ describe Zippy do
     catalog = Zippy.include 'webapp'
     catalog.should contain_nginx__site('webapp')
   end
+
+  context 'when stubbing function calls' do
+    let(:function_stubs) do
+      {:extlookup => {'mongo-host' => '127.0.1.5'}
+      }
+    end
+    it 'should return the value given' do
+      catalog = Zippy.include 'webapp::config'
+      catalog.should contain_file('/etc/webapp.conf').with_content(/mongo-host=127.0.1.5/)
+    end
+  end
 end
