@@ -9,7 +9,9 @@ module Zippy
     setup_puppet
     compiler = Puppet::Parser::Compiler.new(Puppet::Node.new('localhost'))
     ast = ast_for(code,compiler)
-    resources = ast.code[0].evaluate(compiler.topscope)
+    scope = compiler.newscope(nil)
+    scope.source = Puppet::Resource::Type.new(:node,'localhost')
+    resources = ast.code[0].evaluate(scope)
     resources[0].evaluate
     compiler.catalog
   end
