@@ -55,4 +55,16 @@ describe Zippy do
         to raise_error Puppet::Error
     end
   end
+
+  context 'when providing recursive stubs' do
+    let(:function_stubs) do
+      {:extlookup =>
+        { 'foo' => 'bar',
+          'bar' => 'baz'}}
+    end
+    it 'should return the value given' do
+      Zippy.include('webapp::config2').
+        should contain_file('/etc/webapp.conf').with_content(/mongo-host=baz/)
+    end
+  end
 end
