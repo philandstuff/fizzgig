@@ -34,14 +34,8 @@ module Zippy
       # stop template() fn from complaining about missing vardir config
       Puppet[:templatedir] = ""
       compiler = Puppet::Parser::Compiler.new(Puppet::Node.new('localhost'))
-      scope = nil
-      if Puppet::PUPPETVERSION =~ /^3./
-        scope = Puppet::Parser::Scope.new(compiler)
-      else
-        scope = Puppet::Parser::Scope.new(:compiler => compiler)
-      end
+      scope = compiler.newscope(nil)
       scope.source = Puppet::Resource::Type.new(:node,'localhost')
-      scope.parent = compiler.topscope
       ast = ast_for("include #{klass}",compiler)
       resources = ast.code[0].evaluate(scope)
       compiler.catalog
