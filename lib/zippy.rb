@@ -14,18 +14,6 @@ module Zippy
     compiler.catalog
   end
 
-  def self.ast_for(code,compiler)
-    parser = Puppet::Parser::Parser.new compiler.environment.name
-    ast = parser.parse(code)
-  end
-
-  def self.setup_puppet
-    Puppet[:manifestdir] = ''
-    Puppet[:modulepath] = RSpec.configuration.modulepath
-    # stop template() fn from complaining about missing vardir config
-    Puppet[:templatedir] = ""
-  end
-
   def self.include(klass,options = {})
     LSpace.with(:function_stubs => options[:stubs]) do
       setup_puppet
@@ -40,6 +28,18 @@ module Zippy
       resources = ast.code[0].evaluate(scope)
       compiler.catalog
     end
+  end
+
+  def self.ast_for(code,compiler)
+    parser = Puppet::Parser::Parser.new compiler.environment.name
+    ast = parser.parse(code)
+  end
+
+  def self.setup_puppet
+    Puppet[:manifestdir] = ''
+    Puppet[:modulepath] = RSpec.configuration.modulepath
+    # stop template() fn from complaining about missing vardir config
+    Puppet[:templatedir] = ""
   end
 end
 
