@@ -4,13 +4,14 @@ require 'zippy/function_stubs'
 require 'lspace'
 
 module Zippy
-  def self.instantiate(code)
-    #FIXME: set up function stubs for this too
-    setup_puppet
-    compiler = Puppet::Parser::Compiler.new(Puppet::Node.new('localhost'))
-    resources = compile(code,compiler)
-    resources[0].evaluate
-    compiler.catalog
+  def self.instantiate(code,options = {})
+    LSpace.with(:function_stubs => options[:stubs]) do
+      setup_puppet
+      compiler = Puppet::Parser::Compiler.new(Puppet::Node.new('localhost'))
+      resources = compile(code,compiler)
+      resources[0].evaluate
+      compiler.catalog
+    end
   end
 
   def self.include(klass,options = {})

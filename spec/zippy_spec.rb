@@ -13,7 +13,7 @@ describe Zippy do
   it 'should test resources other than files' do
     instance_code = %q[nginx::site {'foo':}]
     instance = Zippy.instantiate(instance_code)
-    instance.should contain_notify('different resource type')
+    instance.should contain_notify('nginx message')
   end
 
   it 'should test content from a template' do
@@ -39,6 +39,12 @@ describe Zippy do
       stubs = {:extlookup => {'mongo-host' => '127.0.1.5'}}
       catalog = Zippy.include('webapp::config', :stubs => stubs)
       catalog.should contain_file('/etc/webapp.conf').with_content(/mongo-host=127.0.1.5/)
+    end
+
+    it 'should return the value given when instantiating a defined type' do
+      stubs = {:extlookup => {'bar' => '99 bottles of beer'}}
+      catalog = Zippy.instantiate(%[nginx::site{'foo': message => extlookup('bar')}], :stubs => stubs)
+      catalog.should contain_notify('nginx message').with_message('99 bottles of beer')
     end
   end
 
