@@ -35,35 +35,27 @@ describe Zippy do
   end
 
   context 'when stubbing function calls' do
-    let(:function_stubs) do
-      {:extlookup => {'mongo-host' => '127.0.1.5'}
-      }
-    end
     it 'should return the value given' do
-      catalog = Zippy.include 'webapp::config'
+      stubs = {:extlookup => {'mongo-host' => '127.0.1.5'}}
+      catalog = Zippy.include('webapp::config', :stubs => stubs)
       catalog.should contain_file('/etc/webapp.conf').with_content(/mongo-host=127.0.1.5/)
     end
   end
 
   context 'when stubbing data different to that provided' do
-    let(:function_stubs) do
-      {:extlookup => {'bananas' => '127.0.1.5'}
-      }
-    end
     it 'should throw an exception' do
-      expect { catalog = Zippy.include 'webapp::config' }.
+      stubs = {:extlookup => {'bananas' => '127.0.1.5'}}
+      expect { catalog = Zippy.include('webapp::config',:stubs=>stubs) }.
         to raise_error Puppet::Error
     end
   end
 
   context 'when providing recursive stubs' do
-    let(:function_stubs) do
-      {:extlookup =>
+    it 'should return the value given' do
+      stubs = {:extlookup =>
         { 'foo' => 'bar',
           'bar' => 'baz'}}
-    end
-    it 'should return the value given' do
-      Zippy.include('webapp::config2').
+      Zippy.include('webapp::config2', :stubs => stubs).
         should contain_file('/etc/webapp.conf').with_content(/mongo-host=baz/)
     end
   end

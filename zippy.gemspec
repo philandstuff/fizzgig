@@ -10,6 +10,7 @@ Gem::Specification.new do |s|
   ]
 
   s.add_dependency 'puppet'
+  s.add_dependency 'lspace'
   s.add_development_dependency 'rake'
   s.add_development_dependency 'rspec'
 
