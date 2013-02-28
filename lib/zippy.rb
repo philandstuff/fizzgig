@@ -8,8 +8,7 @@ module Zippy
     #FIXME: set up function stubs for this too
     setup_puppet
     compiler = Puppet::Parser::Compiler.new(Puppet::Node.new('localhost'))
-    ast = ast_for(code,compiler)
-    resources = resources_for(ast,compiler)
+    resources = compile(code,compiler)
     resources[0].evaluate
     compiler.catalog
   end
@@ -18,10 +17,13 @@ module Zippy
     LSpace.with(:function_stubs => options[:stubs]) do
       setup_puppet
       compiler = Puppet::Parser::Compiler.new(Puppet::Node.new('localhost'))
-      ast = ast_for("include #{klass}",compiler)
-      resources = resources_for(ast,compiler)
+      compile("include #{klass}",compiler)
       compiler.catalog
     end
+  end
+
+  def self.compile(code,compiler)
+    resources_for(ast_for(code,compiler),compiler)
   end
 
   def self.resources_for(ast,compiler)
