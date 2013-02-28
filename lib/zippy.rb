@@ -8,11 +8,15 @@ module Zippy
     #FIXME: set up function stubs for this too
     setup_puppet
     compiler = Puppet::Parser::Compiler.new(Puppet::Node.new('localhost'))
-    parser = Puppet::Parser::Parser.new compiler.environment.name
-    ast = parser.parse(code)
+    ast = ast_for(code,compiler)
     resources = ast.code[0].evaluate(compiler.topscope)
     resources[0].evaluate
     compiler.catalog
+  end
+
+  def self.ast_for(code,compiler)
+    parser = Puppet::Parser::Parser.new compiler.environment.name
+    ast = parser.parse(code)
   end
 
   def self.setup_puppet
@@ -30,7 +34,6 @@ module Zippy
       # stop template() fn from complaining about missing vardir config
       Puppet[:templatedir] = ""
       compiler = Puppet::Parser::Compiler.new(Puppet::Node.new('localhost'))
-      parser = Puppet::Parser::Parser.new compiler.environment.name
       scope = nil
       if Puppet::PUPPETVERSION =~ /^3./
         scope = Puppet::Parser::Scope.new(compiler)
@@ -39,7 +42,7 @@ module Zippy
       end
       scope.source = Puppet::Resource::Type.new(:node,'localhost')
       scope.parent = compiler.topscope
-      ast = parser.parse("include #{klass}")
+      ast = ast_for("include #{klass}",compiler)
       resources = ast.code[0].evaluate(scope)
       compiler.catalog
     end
