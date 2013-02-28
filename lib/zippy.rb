@@ -6,10 +6,7 @@ require 'lspace'
 module Zippy
   def self.instantiate(code)
     #FIXME: set up function stubs for this too
-    Puppet[:manifestdir] = ''
-    Puppet[:modulepath] = RSpec.configuration.modulepath
-    # stop template() fn from complaining about missing vardir config
-    Puppet[:templatedir] = ""
+    setup_puppet
     compiler = Puppet::Parser::Compiler.new(Puppet::Node.new('localhost'))
     parser = Puppet::Parser::Parser.new compiler.environment.name
     ast = parser.parse(code)
@@ -18,8 +15,16 @@ module Zippy
     compiler.catalog
   end
 
+  def self.setup_puppet
+    Puppet[:manifestdir] = ''
+    Puppet[:modulepath] = RSpec.configuration.modulepath
+    # stop template() fn from complaining about missing vardir config
+    Puppet[:templatedir] = ""
+  end
+
   def self.include(klass,options = {})
     LSpace.with(:function_stubs => options[:stubs]) do
+      setup_puppet
       Puppet[:manifestdir] = ''
       Puppet[:modulepath] = RSpec.configuration.modulepath
       # stop template() fn from complaining about missing vardir config
