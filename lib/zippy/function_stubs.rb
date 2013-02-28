@@ -14,22 +14,19 @@ module Zippy::FunctionStubs
   end
 end
 
-module Puppet::Parser::Functions
-  class << self
-    alias_method :real_newfunction, :newfunction
-    def newfunction(name, options = {}, &block)
-      func = real_newfunction(name, options, &block)
-      real_fname = "real_function_#{name}"
-      orig_fname = "orig_function_#{name}"
-      environment_module.send(:alias_method, orig_fname.to_sym, real_fname.to_sym)
-      environment_module.send(:define_method, real_fname) do |args|
-        if Zippy::FunctionStubs.has_stub?(name,args)
-          Zippy::FunctionStubs.get_stub(name,args)
-        else
-          self.send(orig_fname, args)
-        end
+class Puppet::Parser::AST
+  class Function < AST::Branch
+    alias_method :orig_evaluate, :evaluate
+
+    def evaluate(scope)
+      #FIXME: are there implications around potential
+      #double-evaluation here?
+      args = @arguments.safeevaluate(scope).map { |x| x == :undef ? '' : x }
+      if Zippy::FunctionStubs.has_stub?(@name,args)
+        Zippy::FunctionStubs.get_stub(@name,args)
+      else
+        orig_evaluate(scope)
       end
-      func
     end
   end
 end
