@@ -2,31 +2,33 @@ require 'spec_helper'
 require 'zippy'
 
 describe Zippy do
-  it 'should test a define from a module' do
-    instance_code = %q[nginx::site {'foo':}]
-    instance = Zippy.instantiate(instance_code)
-    instance.should contain_file('/etc/nginx/sites-enabled/foo').
-      with_ensure('present').
-      with_mode('0440')
-  end
+  context 'when instantiating defined types' do
+    it 'should test existence of file with parameters' do
+      instance_code = %q[nginx::site {'foo': content => 'dontcare'}]
+      instance = Zippy.instantiate(instance_code)
+      instance.should contain_file('/etc/nginx/sites-enabled/foo').
+        with_ensure('present').
+        with_mode('0440')
+    end
 
-  it 'should test resources other than files' do
-    instance_code = %q[nginx::site {'foo':}]
-    instance = Zippy.instantiate(instance_code)
-    instance.should contain_notify('nginx message')
-  end
+    it 'should test resources other than files' do
+      instance_code = %q[nginx::site {'foo': content => 'dontcare'}]
+      instance = Zippy.instantiate(instance_code)
+      instance.should contain_user('www-data')
+    end
 
-  it 'should test content from a template' do
-    instance_code = %q[nginx::site {'foo':}]
-    instance = Zippy.instantiate(instance_code)
-    instance.should contain_file('/etc/nginx/sites-enabled/foo').
-      with_content(/server_name foo;/)
-  end
+    it 'should test presence of namespaced type' do
+      instance_code = %q[nginx::simple_server {'foo':}]
+      instance = Zippy.instantiate(instance_code)
+      instance.should contain_nginx__site('foo')
+    end
 
-  it 'should test presence of namespaced type' do
-    instance_code = %q[nginx::site {'foo':}]
-    instance = Zippy.instantiate(instance_code)
-    instance.should contain_nginx__wibble('foo')
+    it 'should test content from a template' do
+      instance_code = %q[nginx::simple_server {'foo':}]
+      instance = Zippy.instantiate(instance_code)
+      instance.should contain_nginx__site('foo').
+        with_content(/server_name foo;/)
+    end
   end
 
   it 'should test classes' do
@@ -36,15 +38,15 @@ describe Zippy do
 
   context 'when stubbing function calls' do
     it 'should return the value given' do
-      stubs = {:extlookup => {'mongo-host' => '127.0.1.5'}}
-      catalog = Zippy.include('webapp::config', :stubs => stubs)
-      catalog.should contain_file('/etc/webapp.conf').with_content(/mongo-host=127.0.1.5/)
+      stubs = {:extlookup => {'ssh-key-barry' => 'the key of S'}}
+      catalog = Zippy.include('functions::class_test', :stubs => stubs)
+      catalog.should contain_ssh_authorized_key('barry').with_key('the key of S')
     end
 
     it 'should return the value given when instantiating a defined type' do
-      stubs = {:extlookup => {'bar' => '99 bottles of beer'}}
-      catalog = Zippy.instantiate(%[nginx::site{'foo': message => extlookup('bar')}], :stubs => stubs)
-      catalog.should contain_notify('nginx message').with_message('99 bottles of beer')
+      stubs = {:extlookup => {'ssh-key-barry' => 'the key of S'}}
+      catalog = Zippy.instantiate(%[functions::define_test{'foo': }], :stubs => stubs)
+      catalog.should contain_ssh_authorized_key('barry').with_key('the key of S')
     end
   end
 
