@@ -48,13 +48,13 @@ describe Zippy do
       catalog = Zippy.instantiate(%[functions::define_test{'foo': }], :stubs => stubs)
       catalog.should contain_ssh_authorized_key('barry').with_key('the key of S')
     end
-  end
 
-  context 'when stubbing data different to that provided' do
-    it 'should throw an exception' do
-      stubs = {:extlookup => {'bananas' => 'potassium'}}
-      expect { catalog = Zippy.include('functions::class_test',:stubs=>stubs) }.
-        to raise_error Puppet::Error
+    context 'when stubbing data different to that provided' do
+      it 'should throw an exception' do
+        stubs = {:extlookup => {'bananas' => 'potassium'}}
+        expect { catalog = Zippy.include('functions::class_test',:stubs=>stubs) }.
+          to raise_error Puppet::Error
+      end
     end
   end
 
