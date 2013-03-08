@@ -11,6 +11,7 @@ module Zippy
       node.merge(options[:facts] || {})
       compiler = Puppet::Parser::Compiler.new(node)
       compiler.send :set_node_parameters
+      compiler.send :evaluate_main
       resources = compile(code,compiler)
       resources[0].evaluate
       compiler.catalog
