@@ -69,8 +69,8 @@ describe Zippy do
   context 'when stubbing facts' do
     context 'while instantiating defined types' do
       it 'should lookup unqualified fact from stub' do
-        catalog = Zippy.instantiate(%q[nginx::site{'foo': message => $fact}], :facts => {'fact' => 'hello world'})
-        catalog.should contain_notify('nginx message').with_message('hello world')
+        catalog = Zippy.instantiate(%q[facts::define_test{'test':}], :facts => {'unqualified_fact' => 'hello world'})
+        catalog.should contain_notify('unqualified-fact-test').with_message('hello world')
       end
     end
   end
