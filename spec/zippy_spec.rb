@@ -65,4 +65,13 @@ describe Zippy do
         should contain_file('/etc/webapp.conf').with_content(/mongo-host=baz/)
     end
   end
+
+  context 'when stubbing facts' do
+    context 'while instantiating defined types' do
+      it 'should lookup unqualified fact from stub' do
+        catalog = Zippy.instantiate(%q[nginx::site{'foo': message => $fact}], :facts => {'fact' => 'hello world'})
+        catalog.should contain_notify('nginx message').with_message('hello world')
+      end
+    end
+  end
 end
