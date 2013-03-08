@@ -7,11 +7,7 @@ module Zippy
   def self.instantiate(code,options = {})
     LSpace.with(:function_stubs => options[:stubs]) do
       setup_puppet
-      node = Puppet::Node.new('localhost')
-      node.merge(options[:facts] || {})
-      compiler = Puppet::Parser::Compiler.new(node)
-      compiler.send :set_node_parameters
-      compiler.send :evaluate_main
+      compiler = make_compiler(options[:facts])
       resources = compile(code,compiler)
       resources[0].evaluate
       compiler.catalog
@@ -21,10 +17,19 @@ module Zippy
   def self.include(klass,options = {})
     LSpace.with(:function_stubs => options[:stubs]) do
       setup_puppet
-      compiler = Puppet::Parser::Compiler.new(Puppet::Node.new('localhost'))
+      compiler = make_compiler(options[:facts])
       compile("include #{klass}",compiler)
       compiler.catalog
     end
+  end
+
+  def self.make_compiler(facts)
+    node = Puppet::Node.new('localhost')
+    node.merge(facts) if facts
+    compiler = Puppet::Parser::Compiler.new(node)
+    compiler.send :set_node_parameters
+    compiler.send :evaluate_main
+    compiler
   end
 
   def self.compile(code,compiler)

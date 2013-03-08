@@ -78,5 +78,17 @@ describe Zippy do
         catalog.should contain_notify('qualified-fact-test').with_message('hello world')
       end
     end
+
+    context 'while including classes' do
+      it 'should lookup unqualified fact from stub' do
+        catalog = Zippy.include('facts::class_test', :facts => {'unqualified_fact' => 'hello world'})
+        catalog.should contain_notify('unqualified-fact-test').with_message('hello world')
+      end
+
+      it 'should lookup qualified fact from stub' do
+        catalog = Zippy.include('facts::class_test', :facts => {'qualified_fact' => 'hello world'})
+        catalog.should contain_notify('qualified-fact-test').with_message('hello world')
+      end
+    end
   end
 end
