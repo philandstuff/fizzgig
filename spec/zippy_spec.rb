@@ -52,8 +52,8 @@ describe Zippy do
 
   context 'when stubbing data different to that provided' do
     it 'should throw an exception' do
-      stubs = {:extlookup => {'bananas' => '127.0.1.5'}}
-      expect { catalog = Zippy.include('webapp::config',:stubs=>stubs) }.
+      stubs = {:extlookup => {'bananas' => 'potassium'}}
+      expect { catalog = Zippy.include('functions::class_test',:stubs=>stubs) }.
         to raise_error Puppet::Error
     end
   end
@@ -61,10 +61,10 @@ describe Zippy do
   context 'when providing recursive stubs' do
     it 'should return the value given' do
       stubs = {:extlookup =>
-        { 'foo' => 'bar',
-          'bar' => 'baz'}}
-      Zippy.include('webapp::config2', :stubs => stubs).
-        should contain_file('/etc/webapp.conf').with_content(/mongo-host=baz/)
+        { 'ssh-key-barry' => 'rsa-key-barry',
+          'rsa-key-barry' => 'the key of S'}}
+      Zippy.include('functions::recursive_extlookup_test', :stubs => stubs).
+        should contain_ssh_authorized_key('barry').with_key('the key of S')
     end
   end
 
