@@ -1,5 +1,5 @@
 require 'rspec/autorun'
-require 'zippy'
+require 'fizzgig'
 
 HERE = File.expand_path(File.dirname(__FILE__))
 

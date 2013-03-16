@@ -1,5 +1,5 @@
 require 'spec_helper'
-require 'zippy'
+require 'fizzgig'
 
 describe Fizzgig do
   context 'when instantiating defined types' do

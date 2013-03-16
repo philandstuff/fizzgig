@@ -1,6 +1,6 @@
 require 'puppet'
-require 'zippy/matchers'
-require 'zippy/function_stubs'
+require 'fizzgig/matchers'
+require 'fizzgig/function_stubs'
 require 'lspace'
 
 module Fizzgig
