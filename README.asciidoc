@@ -1,0 +1,29 @@
+Fizzgig
+-------
+
+Fizzgig is a library to help write fast unit tests.
+
+[source,ruby]
+-------------------------------------------
+describe 'ganglia::cronjob' do
+  include Zippy::CatalogMatchers
+
+  it do
+    catalog = Zippy.instantiate <<END
+      ganglia::cronjob {'tiger':
+        content => 'tiger content',
+      }
+END
+    catalog.should contain_file('/etc/ganglia/scripts/tiger')
+      .with_content('tiger content')
+      .with_mode('0755')
+
+    catalog.should contain_cron('ganglia-tiger')
+      .with_command('/etc/ganglia/scripts/tiger')
+      .with_minute('*')
+      .with_user('root')
+  end
+end
+--------------------------------------------
+
+
