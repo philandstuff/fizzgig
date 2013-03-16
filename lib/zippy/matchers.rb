@@ -1,3 +1,4 @@
+require 'rspec'
 module Zippy
   module CatalogMatchers
     extend RSpec::Matchers::DSL

@@ -91,6 +91,21 @@ describe Zippy do
         catalog = Zippy.include('facts::class_test', :facts => {'qualified_fact' => 'hello world'})
         catalog.should contain_notify('qualified-fact-test').with_message('hello world')
       end
+
+      it 'should lookup fact by instance variable from within template' do
+        catalog = Zippy.include('facts::template_test', :facts => {'template_visible_fact' => 'hello world'})
+        catalog.should contain_file('template-test').with_content(/instance_fact:hello world/)
+      end
+
+      it 'should lookup fact by accessor method from within template' do
+        catalog = Zippy.include('facts::template_test', :facts => {'template_visible_fact' => 'hello world'})
+        catalog.should contain_file('template-test').with_content(/accessor_fact:hello world/)
+      end
+
+      it 'should lookup fact by scope.lookupvar from within template' do
+        catalog = Zippy.include('facts::template_test', :facts => {'template_visible_fact' => 'hello world'})
+        catalog.should contain_file('template-test').with_content(/scope_lookup_fact:hello world/)
+      end
     end
   end
 end
