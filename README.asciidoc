@@ -6,10 +6,10 @@ Fizzgig is a library to help write fast unit tests.
 [source,ruby]
 -------------------------------------------
 describe 'ganglia::cronjob' do
-  include Zippy::CatalogMatchers
+  include Fizzgig::CatalogMatchers
 
   it do
-    catalog = Zippy.instantiate <<END
+    catalog = Fizzgig.instantiate <<END
       ganglia::cronjob {'tiger':
         content => 'tiger content',
       }
@@ -26,5 +26,109 @@ END
 end
 -------------------------------------------
 
+Basic Functionality
+~~~~~~~~~~~~~~~~~~~
 
+Fizzgig is based around two functions: +instantiate+ and +include+,
+which will instantiate a defined type and include a class
+respectively:
+
+[source,ruby]
+catalog = Fizzgig.instantiate %q[ nginx::site {'foo.com': max_age => 300 } ]
+
+[source,ruby]
+catalog = Fizzgig.include 'nginx'
+
+Each of these functions returns a Puppet::Resource::Catalog
+object. You can use the matchers in Fizzgig::CatalogMatchers to make
+assertions against the contents of this catalog:
+
+[source,ruby]
+catalog.should contain_file('/etc/nginx.conf').with_content(/ssl/)
+
+Just like in rspec-puppet, you can assert the existence of defined
+types within your own modules by replacing +::+ with +__+ in the name:
+
+[source,ruby]
+catalog.should contain_nginx__site('foo.com')
+
+Stubbing facts
+~~~~~~~~~~~~~~
+
+Facts can be stubbed by passing a hash of fact values to instantiate
+or include:
+
+[source,ruby]
+Fizzgig.include('nginx',:facts => {'lsbdistcodename' => 'precise'})
+
+Stubbing functions
+~~~~~~~~~~~~~~~~~~
+
+Custom functions can also be stubbed. This is very handy for stubbing
+out extdata or hieradata in tests:
+
+[source,ruby]
+-------------
+Fizzgig.include('nginx',:stubs => {:extlookup => {'site_root' => 'www.foo.com'}})
+  .should contain_file('/etc/nginx/sites-enabled/www.foo.com')
+-------------
+
+Rationale
+~~~~~~~~~
+
+Fizzgig is designed to be fast, and to test individual units of code,
+as good unit tests do. However, existing puppet testing libraries such
+as https://github.com/rodjek/rspec-puppet[rspec-puppet] will compute a
+complete catalog, expanding out all classes and defined types until it
+reaches the individual base puppet types. This means that it can spend
+time computing resources which are wholly unrelated to the test you're
+writing.
+
+Fizzgig, by contrast, treats defined types as black box abstractions:
+it only adds the defined types you declare within the class or define
+under test to the catalog. Types which are pulled in transitively by
+other types will not be added to the catalog.
+
+Defined types
+~~~~~~~~~~~~~
+
+To achieve its isolation, fizzgig does not transitively evaluate
+defined types. Suppose I have these puppet defines:
+
+[source,puppet]
+---------------
+define nginx::ssl_site () {
+  nginx::site {$title:
+  }
+  nginx::ssl_cert {$title:
+  }
+}
+
+define nginx::site () {
+  file {"/etc/nginx/sites-enabled/$title":
+    # ...
+  }
+}
+---------------
+
+And I write this test:
+
+[source,ruby]
+-------------
+catalog Zippy.instantiate %q[ nginx::ssl_site{'foo': } ]
+catalog.should contain_nginx__site('foo') # ok, will pass
+catalog.should contain_file('/etc/nginx/sites-enabled/foo') # ERROR, will fail
+-------------
+
+Because the file resource is not directly referenced by
++nginx::ssl_site+ but only transitively by +nginx::site+, Fizzgig will
+not add it to the catalog. This means that Fizzgig will only test the
+direct effects of the type under test, not of its collaborators.
+
+
+WARNING: Fizzgig makes use of non-public methods in the puppet
+codebase to enable it to perform this isolation. This means that even
+a patch release of puppet may, in principle, cause fizzgig to
+break. Fizzgig is not currently supported in any way by
+puppetlabs. Use at your own risk.
 
