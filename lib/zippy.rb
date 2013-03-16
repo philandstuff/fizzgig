@@ -3,7 +3,7 @@ require 'zippy/matchers'
 require 'zippy/function_stubs'
 require 'lspace'
 
-module Zippy
+module Fizzgig
   def self.instantiate(code,options = {})
     LSpace.with(:function_stubs => options[:stubs]) do
       setup_puppet

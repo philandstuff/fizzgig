@@ -1,5 +1,5 @@
 
-module Zippy::FunctionStubs
+module Fizzgig::FunctionStubs
   def self.has_stub?(fname,args)
     stubs = LSpace[:function_stubs] || {}
     stubs.has_key?(fname.to_sym) &&
@@ -19,8 +19,8 @@ class Puppet::Parser::AST
       #FIXME: are there implications around potential
       #double-evaluation here?
       args = @arguments.safeevaluate(scope).map { |x| x == :undef ? '' : x }
-      if Zippy::FunctionStubs.has_stub?(@name,args)
-        Zippy::FunctionStubs.get_stub(@name,args)
+      if Fizzgig::FunctionStubs.has_stub?(@name,args)
+        Fizzgig::FunctionStubs.get_stub(@name,args)
       else
         orig_evaluate(scope)
       end
