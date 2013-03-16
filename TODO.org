@@ -1,0 +1,72 @@
+
+* Config options used by rspec-puppet:
+Puppet[:certname]
+Puppet[:code]
+Puppet[:config]
+Puppet[:libdir]
+Puppet[:manifest]
+Puppet[:manifestdir]
+Puppet[:modulepath]
+Puppet[:templatedir]
+** rspec config added by rspec-puppet
+RSpec.configure do |c|
+  c.add_setting :module_path, :default => '/etc/puppet/modules'
+  c.add_setting :manifest_dir, :default => nil
+  c.add_setting :manifest, :default => nil
+  c.add_setting :template_dir, :default => nil
+  c.add_setting :config, :default => nil
+end
+* Feature ideas
+** DONE Test defined types
+** DONE Test templates
+** DONE test for creation of namespaced types
+** DONE test that created types actually exist
+** DONE play nicely with rspec-puppet
+** DONE Stub puppet functions (inc extlookup and hiera)
+** DONE Test classes
+** DONE Stub facts
+
+from rspec-puppet?
+
+node_obj = Puppet::Node.new(nodename) # default to Puppet[:certname]?
+node_obj.merge(facts_val) # but what is this?
+
+** TODO Document it!
+** TODO Ensure that modulepath can take multiple directories
+   - in govuk/puppet, we had trouble having multiple directories on
+     the module path, so we ended up doing this:
+
+#+BEGIN_SRC ruby
+  RSpec.configure do |c|
+    c.module_path = File.join(HERE, 'modules')
+  # ...
+  end
+  
+  # note monkey-patch here because the modulepath isn't working
+  module RSpec::Puppet
+    module Support
+      alias_method :real_build_catalog, :build_catalog
+      def build_catalog (nodename, fact_val, code)
+        Puppet[:modulepath] = File.join(HERE, 'modules') + ':' + File.join(HERE, 'vendor', 'modules')
+        real_build_catalog(nodename,fact_val,code)
+      end
+    end
+  end
+#+END_SRC
+
+That's not so cool :(
+
+** TODO Rename
+** TODO Release it!
+** TODO implementation-independent dependency assertions
+** TODO Test standalone puppet modules
+** TODO better test output for files with large content
+** TODO Test puppet types (ie from lib/puppet/parser/types)
+** TODO Test templates in isolation
+** TODO Test custom facts
+** TODO Virtual/exported resources
+** TODO Parameterized classes
+** TODO Preconditions (do I actually want this?)
+** TODO nodes
+See govuk_nodes_spec_optional for examples of this.
+the rspec-puppet equivalent is :type => :host
