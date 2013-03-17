@@ -35,6 +35,8 @@ node_obj.merge(facts_val) # but what is this?
    - [ ] gem install or gemfile line
 ** TODO Issue with global Puppet settings config & running rspec-puppet simultaneously with puppet...
 See the fizzgig branch of puppet for an example
+
+Can we isolate the compiler from the settings?
 ** TODO Ensure that modulepath can take multiple directories
    - in govuk/puppet, we had trouble having multiple directories on
      the module path, so we ended up doing this:
