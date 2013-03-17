@@ -48,10 +48,10 @@ module Fizzgig
   end
 
   def self.setup_puppet
-    Puppet[:manifestdir] = ''
+    Puppet[:code] = ' ' # hack to suppress puppet from looking at Puppet[:manifest]
     Puppet[:modulepath] = RSpec.configuration.modulepath
     # stop template() fn from complaining about missing vardir config
-    Puppet[:templatedir] = ""
+    Puppet[:vardir] ||= ""
   end
 end
 
