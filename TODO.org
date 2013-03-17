@@ -32,6 +32,9 @@ node_obj = Puppet::Node.new(nodename) # default to Puppet[:certname]?
 node_obj.merge(facts_val) # but what is this?
 
 ** TODO Document it!
+   - [ ] gem install or gemfile line
+** TODO Issue with global Puppet settings config & running rspec-puppet simultaneously with puppet...
+See the fizzgig branch of puppet for an example
 ** TODO Ensure that modulepath can take multiple directories
    - in govuk/puppet, we had trouble having multiple directories on
      the module path, so we ended up doing this:
