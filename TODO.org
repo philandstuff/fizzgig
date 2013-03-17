@@ -31,6 +31,7 @@ from rspec-puppet?
 node_obj = Puppet::Node.new(nodename) # default to Puppet[:certname]?
 node_obj.merge(facts_val) # but what is this?
 
+** DONE Release it!
 ** TODO Document it!
    - [ ] gem install or gemfile line
 ** TODO Issue with global Puppet settings config & running rspec-puppet simultaneously with puppet...
@@ -62,7 +63,6 @@ Can we isolate the compiler from the settings?
 That's not so cool :(
 
 ** TODO Rename
-** TODO Release it!
 ** TODO implementation-independent dependency assertions
 ** TODO Test standalone puppet modules
 ** TODO better test output for files with large content
