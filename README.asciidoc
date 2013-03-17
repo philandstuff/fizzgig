@@ -115,7 +115,7 @@ And I write this test:
 
 [source,ruby]
 -------------
-catalog Zippy.instantiate %q[ nginx::ssl_site{'foo': } ]
+catalog Fizzgig.instantiate %q[ nginx::ssl_site{'foo': } ]
 catalog.should contain_nginx__site('foo') # ok, will pass
 catalog.should contain_file('/etc/nginx/sites-enabled/foo') # ERROR, will fail
 -------------
