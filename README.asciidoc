@@ -8,7 +8,7 @@ Fizzgig is a library to help write fast unit tests.
 describe 'ganglia::cronjob' do
   include Fizzgig::CatalogMatchers
 
-  it do
+  it 'should create ganglia script and cron job' do
     catalog = Fizzgig.instantiate <<END
       ganglia::cronjob {'tiger':
         content => 'tiger content',
