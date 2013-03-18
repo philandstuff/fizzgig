@@ -6,13 +6,13 @@ describe Fizzgig do
     subject { Fizzgig.include(classname, :stubs => stubs) }
     let(:stubs) { {} }
 
-    context 'with class webapp' do
+    describe 'webapp' do
       let(:classname) {'webapp'}
 
       it { should contain_nginx__site('webapp') }
     end
 
-    context 'with class functions::class_test' do
+    describe 'functions::class_test' do
       let(:classname) {'functions::class_test'}
       context 'with extlookup stubbed out' do
         let(:stubs) { {:extlookup => {'ssh-key-barry' => 'the key of S'}} }
