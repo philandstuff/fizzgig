@@ -3,8 +3,9 @@ require 'fizzgig'
 
 describe Fizzgig do
   describe '#include' do
-    subject { Fizzgig.include(classname, :stubs => stubs) }
+    subject { Fizzgig.include(classname, :stubs => stubs, :facts => facts) }
     let(:stubs) { {} }
+    let(:facts) { {} }
 
     describe 'webapp' do
       let(:classname) {'webapp'}
@@ -35,6 +36,19 @@ describe Fizzgig do
             'rsa-key-barry' => 'the key of S'}}
       }
       it { should contain_ssh_authorized_key('barry').with_key('the key of S') }
+    end
+
+    describe 'facts::class_test' do
+      let(:classname) {'facts::class_test'}
+      let(:facts) {
+        { 'unqualified_fact'      => 'F',
+          'qualified_fact'        => 'B+',
+          'template_visible_fact' => 'wibble' }}
+      it { should contain_notify('unqualified-fact-test').with_message('F') }
+      it { should contain_notify('qualified-fact-test').with_message('B+') }
+      it { should contain_file('template-test').with_content(/instance_fact:wibble/) }
+      it { should contain_file('template-test').with_content(/accessor_fact:wibble/) }
+      it { should contain_file('template-test').with_content(/scope_lookup_fact:wibble/) }
     end
   end
 
@@ -79,35 +93,6 @@ describe Fizzgig do
       }
       it { should contain_notify('unqualified-fact-test').with_message('no qualifications') }
       it { should contain_notify('qualified-fact-test').with_message('cse ungraded in metalwork') }
-    end
-  end
-
-  context 'when stubbing facts' do
-    context 'while including classes' do
-      it 'should lookup unqualified fact from stub' do
-        catalog = Fizzgig.include('facts::class_test', :facts => {'unqualified_fact' => 'hello world'})
-        catalog.should contain_notify('unqualified-fact-test').with_message('hello world')
-      end
-
-      it 'should lookup qualified fact from stub' do
-        catalog = Fizzgig.include('facts::class_test', :facts => {'qualified_fact' => 'hello world'})
-        catalog.should contain_notify('qualified-fact-test').with_message('hello world')
-      end
-
-      it 'should lookup fact by instance variable from within template' do
-        catalog = Fizzgig.include('facts::template_test', :facts => {'template_visible_fact' => 'hello world'})
-        catalog.should contain_file('template-test').with_content(/instance_fact:hello world/)
-      end
-
-      it 'should lookup fact by accessor method from within template' do
-        catalog = Fizzgig.include('facts::template_test', :facts => {'template_visible_fact' => 'hello world'})
-        catalog.should contain_file('template-test').with_content(/accessor_fact:hello world/)
-      end
-
-      it 'should lookup fact by scope.lookupvar from within template' do
-        catalog = Fizzgig.include('facts::template_test', :facts => {'template_visible_fact' => 'hello world'})
-        catalog.should contain_file('template-test').with_content(/scope_lookup_fact:hello world/)
-      end
     end
   end
 end

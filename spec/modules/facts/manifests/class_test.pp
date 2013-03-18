@@ -5,4 +5,7 @@ class facts::class_test {
     'qualified-fact-test':
       message => $::qualified_fact;
   }
+  file {'template-test':
+    content => template('facts/template-test.erb'),
+  }
 }
