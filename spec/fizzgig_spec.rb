@@ -39,8 +39,9 @@ describe Fizzgig do
   end
 
   describe '#instantiate' do
-    subject { Fizzgig.instantiate(code, :stubs => stubs) }
-    let (:stubs) { {} }
+    subject { Fizzgig.instantiate(code, :stubs => stubs, :facts => facts) }
+    let(:stubs) { {} }
+    let(:facts) { {} }
 
     describe 'nginx::site' do
       context 'basic functionality' do
@@ -68,21 +69,22 @@ describe Fizzgig do
       let(:code) { %[functions::define_test{'foo': }] }
       it { should contain_ssh_authorized_key('barry').with_key('the key of S') }
     end
+
+    describe 'facts::define_test' do
+      let(:classname) {'facts::define_test'}
+      let(:code) {%q[facts::define_test{'test':}]}
+      context 'with unqualified facts' do
+        let(:facts) { {'unqualified_fact' => 'hello world'} }
+        it { should contain_notify('unqualified-fact-test').with_message('hello world') }
+      end
+      context 'with qualified facts' do
+        let(:facts) { {'qualified_fact' => 'hello world'} }
+        it { should contain_notify('qualified-fact-test').with_message('hello world') }
+      end
+    end
   end
 
   context 'when stubbing facts' do
-    context 'while instantiating defined types' do
-      it 'should lookup unqualified fact from stub' do
-        catalog = Fizzgig.instantiate(%q[facts::define_test{'test':}], :facts => {'unqualified_fact' => 'hello world'})
-        catalog.should contain_notify('unqualified-fact-test').with_message('hello world')
-      end
-
-      it 'should lookup qualified fact from stub' do
-        catalog = Fizzgig.instantiate(%q[facts::define_test{'test':}], :facts => {'qualified_fact' => 'hello world'})
-        catalog.should contain_notify('qualified-fact-test').with_message('hello world')
-      end
-    end
-
     context 'while including classes' do
       it 'should lookup unqualified fact from stub' do
         catalog = Fizzgig.include('facts::class_test', :facts => {'unqualified_fact' => 'hello world'})
