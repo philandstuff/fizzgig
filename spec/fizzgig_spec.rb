@@ -32,18 +32,18 @@ describe Fizzgig do
     subject { Fizzgig.instantiate(code, :stubs => stubs) }
     let (:stubs) { {} }
 
-    context 'with function stubs' do
-      let(:stubs) { {:extlookup => {'ssh-key-barry' => 'the key of S'}} }
-      let(:code) { %[functions::define_test{'foo': }] }
-      it { should contain_ssh_authorized_key('barry').with_key('the key of S') }
-    end
-
     context 'nginx::site' do
       let(:code) { %q[nginx::site {'foo': content => 'dontcare'}] }
       it { should contain_file('/etc/nginx/sites-enabled/foo').
         with_ensure('present').
         with_mode('0440')
       }
+    end
+
+    context 'functions::define_test with function stubs' do
+      let(:stubs) { {:extlookup => {'ssh-key-barry' => 'the key of S'}} }
+      let(:code) { %[functions::define_test{'foo': }] }
+      it { should contain_ssh_authorized_key('barry').with_key('the key of S') }
     end
   end
 
