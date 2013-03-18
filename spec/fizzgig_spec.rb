@@ -47,6 +47,9 @@ describe Fizzgig do
       context 'basic functionality' do
         let(:code) { %q[nginx::simple_server {'foo':}] }
         it { should contain_nginx__site('foo') }
+        it { should contain_nginx__site('foo').
+          with_content(/server_name foo;/)
+        }
       end
     end
 
@@ -54,15 +57,6 @@ describe Fizzgig do
       let(:stubs) { {:extlookup => {'ssh-key-barry' => 'the key of S'}} }
       let(:code) { %[functions::define_test{'foo': }] }
       it { should contain_ssh_authorized_key('barry').with_key('the key of S') }
-    end
-  end
-
-  context 'when instantiating defined types' do
-    it 'should test content from a template' do
-      instance_code = %q[nginx::simple_server {'foo':}]
-      instance = Fizzgig.instantiate(instance_code)
-      instance.should contain_nginx__site('foo').
-        with_content(/server_name foo;/)
     end
   end
 
