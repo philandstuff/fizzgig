@@ -2,6 +2,39 @@ require 'spec_helper'
 require 'fizzgig'
 
 describe Fizzgig do
+  describe '#include' do
+    subject { Fizzgig.include(classname, :stubs => stubs) }
+    let(:stubs) { {} }
+
+    context 'with class webapp' do
+      let(:classname) {'webapp'}
+
+      it { should contain_nginx__site('webapp') }
+    end
+
+    context 'with class functions::class_test' do
+      let(:classname) {'functions::class_test'}
+      context 'with extlookup stubbed out' do
+        let(:stubs) { {:extlookup => {'ssh-key-barry' => 'the key of S'}} }
+        it { should contain_ssh_authorized_key('barry').with_key('the key of S') }
+      end
+
+      context 'when stubbing data different to that provided' do
+        it 'should throw an exception' do
+          stubs = {:extlookup => {'bananas' => 'potassium'}}
+          expect { catalog = Fizzgig.include('functions::class_test',:stubs=>stubs) }.
+            to raise_error Puppet::Error
+        end
+      end
+
+      it 'should return the value given when instantiating a defined type' do
+        stubs = {:extlookup => {'ssh-key-barry' => 'the key of S'}}
+        catalog = Fizzgig.instantiate(%[functions::define_test{'foo': }], :stubs => stubs)
+        catalog.should contain_ssh_authorized_key('barry').with_key('the key of S')
+      end
+    end
+  end
+
   context 'when instantiating defined types' do
     it 'should test existence of file with parameters' do
       instance_code = %q[nginx::site {'foo': content => 'dontcare'}]
@@ -28,33 +61,6 @@ describe Fizzgig do
       instance = Fizzgig.instantiate(instance_code)
       instance.should contain_nginx__site('foo').
         with_content(/server_name foo;/)
-    end
-  end
-
-  it 'should test classes' do
-    catalog = Fizzgig.include 'webapp'
-    catalog.should contain_nginx__site('webapp')
-  end
-
-  context 'when stubbing function calls' do
-    it 'should return the value given' do
-      stubs = {:extlookup => {'ssh-key-barry' => 'the key of S'}}
-      catalog = Fizzgig.include('functions::class_test', :stubs => stubs)
-      catalog.should contain_ssh_authorized_key('barry').with_key('the key of S')
-    end
-
-    it 'should return the value given when instantiating a defined type' do
-      stubs = {:extlookup => {'ssh-key-barry' => 'the key of S'}}
-      catalog = Fizzgig.instantiate(%[functions::define_test{'foo': }], :stubs => stubs)
-      catalog.should contain_ssh_authorized_key('barry').with_key('the key of S')
-    end
-
-    context 'when stubbing data different to that provided' do
-      it 'should throw an exception' do
-        stubs = {:extlookup => {'bananas' => 'potassium'}}
-        expect { catalog = Fizzgig.include('functions::class_test',:stubs=>stubs) }.
-          to raise_error Puppet::Error
-      end
     end
   end
 
