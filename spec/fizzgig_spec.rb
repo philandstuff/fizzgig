@@ -43,6 +43,13 @@ describe Fizzgig do
       end
     end
 
+    describe 'nginx::simple_server' do
+      context 'basic functionality' do
+        let(:code) { %q[nginx::simple_server {'foo':}] }
+        it { should contain_nginx__site('foo') }
+      end
+    end
+
     context 'functions::define_test with function stubs' do
       let(:stubs) { {:extlookup => {'ssh-key-barry' => 'the key of S'}} }
       let(:code) { %[functions::define_test{'foo': }] }
@@ -51,12 +58,6 @@ describe Fizzgig do
   end
 
   context 'when instantiating defined types' do
-    it 'should test presence of namespaced type' do
-      instance_code = %q[nginx::simple_server {'foo':}]
-      instance = Fizzgig.instantiate(instance_code)
-      instance.should contain_nginx__site('foo')
-    end
-
     it 'should test content from a template' do
       instance_code = %q[nginx::simple_server {'foo':}]
       instance = Fizzgig.instantiate(instance_code)
