@@ -71,7 +71,6 @@ describe Fizzgig do
     describe 'nginx::simple_server' do
       context 'basic functionality' do
         let(:code) { %q[nginx::simple_server {'foo':}] }
-        it { should contain_nginx__site('foo') }
         it { should contain_nginx__site('foo').
           with_content(/server_name foo;/)
         }
