@@ -37,17 +37,17 @@ describe Fizzgig do
       let(:code) { %[functions::define_test{'foo': }] }
       it { should contain_ssh_authorized_key('barry').with_key('the key of S') }
     end
+
+    context 'nginx::site' do
+      let(:code) { %q[nginx::site {'foo': content => 'dontcare'}] }
+      it { should contain_file('/etc/nginx/sites-enabled/foo').
+        with_ensure('present').
+        with_mode('0440')
+      }
+    end
   end
 
   context 'when instantiating defined types' do
-    it 'should test existence of file with parameters' do
-      instance_code = %q[nginx::site {'foo': content => 'dontcare'}]
-      instance = Fizzgig.instantiate(instance_code)
-      instance.should contain_file('/etc/nginx/sites-enabled/foo').
-        with_ensure('present').
-        with_mode('0440')
-    end
-
     it 'should test resources other than files' do
       instance_code = %q[nginx::site {'foo': content => 'dontcare'}]
       instance = Fizzgig.instantiate(instance_code)
