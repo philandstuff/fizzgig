@@ -25,12 +25,17 @@ describe Fizzgig do
           expect { subject }.to raise_error Puppet::Error
         end
       end
+    end
+  end
 
-      it 'should return the value given when instantiating a defined type' do
-        stubs = {:extlookup => {'ssh-key-barry' => 'the key of S'}}
-        catalog = Fizzgig.instantiate(%[functions::define_test{'foo': }], :stubs => stubs)
-        catalog.should contain_ssh_authorized_key('barry').with_key('the key of S')
-      end
+  describe '#instantiate' do
+    subject { Fizzgig.instantiate(code, :stubs => stubs) }
+    let (:stubs) { {} }
+
+    context 'with function stubs' do
+      let(:stubs) { {:extlookup => {'ssh-key-barry' => 'the key of S'}} }
+      let(:code) { %[functions::define_test{'foo': }] }
+      it { should contain_ssh_authorized_key('barry').with_key('the key of S') }
     end
   end
 
