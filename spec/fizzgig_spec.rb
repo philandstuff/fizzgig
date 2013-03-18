@@ -73,14 +73,12 @@ describe Fizzgig do
     describe 'facts::define_test' do
       let(:classname) {'facts::define_test'}
       let(:code) {%q[facts::define_test{'test':}]}
-      context 'with unqualified facts' do
-        let(:facts) { {'unqualified_fact' => 'hello world'} }
-        it { should contain_notify('unqualified-fact-test').with_message('hello world') }
-      end
-      context 'with qualified facts' do
-        let(:facts) { {'qualified_fact' => 'hello world'} }
-        it { should contain_notify('qualified-fact-test').with_message('hello world') }
-      end
+      let(:facts) {
+        { 'unqualified_fact' => 'no qualifications',
+          'qualified_fact'   => 'cse ungraded in metalwork'}
+      }
+      it { should contain_notify('unqualified-fact-test').with_message('no qualifications') }
+      it { should contain_notify('qualified-fact-test').with_message('cse ungraded in metalwork') }
     end
   end
 
