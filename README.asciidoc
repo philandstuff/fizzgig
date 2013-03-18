@@ -132,3 +132,7 @@ a patch release of puppet may, in principle, cause fizzgig to
 break. Fizzgig is not currently supported in any way by
 puppetlabs. Use at your own risk.
 
+Licence
+~~~~~~~
+
+MIT. See LICENSE for details.
