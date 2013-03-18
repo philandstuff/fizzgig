@@ -32,12 +32,15 @@ describe Fizzgig do
     subject { Fizzgig.instantiate(code, :stubs => stubs) }
     let (:stubs) { {} }
 
-    context 'nginx::site' do
-      let(:code) { %q[nginx::site {'foo': content => 'dontcare'}] }
-      it { should contain_file('/etc/nginx/sites-enabled/foo').
-        with_ensure('present').
-        with_mode('0440')
-      }
+    describe 'nginx::site' do
+      context 'basic functionality' do
+        let(:code) { %q[nginx::site {'foo': content => 'dontcare'}] }
+        it { should contain_file('/etc/nginx/sites-enabled/foo').
+          with_ensure('present').
+          with_mode('0440')
+        }
+        it { should contain_user('www-data') }
+      end
     end
 
     context 'functions::define_test with function stubs' do
@@ -48,12 +51,6 @@ describe Fizzgig do
   end
 
   context 'when instantiating defined types' do
-    it 'should test resources other than files' do
-      instance_code = %q[nginx::site {'foo': content => 'dontcare'}]
-      instance = Fizzgig.instantiate(instance_code)
-      instance.should contain_user('www-data')
-    end
-
     it 'should test presence of namespaced type' do
       instance_code = %q[nginx::simple_server {'foo':}]
       instance = Fizzgig.instantiate(instance_code)
