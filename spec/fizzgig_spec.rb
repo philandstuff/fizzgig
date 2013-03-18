@@ -26,6 +26,16 @@ describe Fizzgig do
         end
       end
     end
+
+    describe 'functions::recursive_extlookup_test' do
+      let(:classname) {'functions::recursive_extlookup_test'}
+      let(:stubs) {
+        {:extlookup =>
+          { 'ssh-key-barry' => 'rsa-key-barry',
+            'rsa-key-barry' => 'the key of S'}}
+      }
+      it { should contain_ssh_authorized_key('barry').with_key('the key of S') }
+    end
   end
 
   describe '#instantiate' do
@@ -57,16 +67,6 @@ describe Fizzgig do
       let(:stubs) { {:extlookup => {'ssh-key-barry' => 'the key of S'}} }
       let(:code) { %[functions::define_test{'foo': }] }
       it { should contain_ssh_authorized_key('barry').with_key('the key of S') }
-    end
-  end
-
-  context 'when providing recursive stubs' do
-    it 'should return the value given' do
-      stubs = {:extlookup =>
-        { 'ssh-key-barry' => 'rsa-key-barry',
-          'rsa-key-barry' => 'the key of S'}}
-      Fizzgig.include('functions::recursive_extlookup_test', :stubs => stubs).
-        should contain_ssh_authorized_key('barry').with_key('the key of S')
     end
   end
 
