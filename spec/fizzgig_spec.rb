@@ -19,11 +19,10 @@ describe Fizzgig do
         it { should contain_ssh_authorized_key('barry').with_key('the key of S') }
       end
 
-      context 'when stubbing data different to that provided' do
+      context 'with extlookup stubbed with wrong key' do
+        let(:stubs) { {:extlookup => {'bananas' => 'potassium'}} }
         it 'should throw an exception' do
-          stubs = {:extlookup => {'bananas' => 'potassium'}}
-          expect { catalog = Fizzgig.include('functions::class_test',:stubs=>stubs) }.
-            to raise_error Puppet::Error
+          expect { subject }.to raise_error Puppet::Error
         end
       end
 
