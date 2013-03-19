@@ -132,6 +132,19 @@ a patch release of puppet may, in principle, cause fizzgig to
 break. Fizzgig is not currently supported in any way by
 puppetlabs. Use at your own risk.
 
+Installation
+~~~~~~~~~~~~
+
+Add the following to your Gemfile:
+
+[source,ruby]
+gem "fizzgig"
+
+Or just run:
+
+[source]
+gem install fizzgig
+
 Licence
 ~~~~~~~
 
