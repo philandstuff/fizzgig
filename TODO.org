@@ -32,6 +32,9 @@ node_obj = Puppet::Node.new(nodename) # default to Puppet[:certname]?
 node_obj.merge(facts_val) # but what is this?
 
 ** DONE Release it!
+** DONE Fix bug where multiple with_foo() conditions would be overridden by the last
+=should contain_file('foo').with_content(/bar/).with_content(/baz/)=
+would not check =/bar/=, only =/baz/=, for example
 ** TODO Document it!
    - [ ] gem install or gemfile line
 ** TODO Issue with global Puppet settings config & running rspec-puppet simultaneously with puppet...

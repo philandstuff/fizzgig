@@ -77,6 +77,10 @@ describe Fizzgig do
           with_ensure('present').
           with_mode('0440')
         }
+        it { should_not contain_file('/etc/nginx/sites-enabled/foo').
+          with_ensure(/text not present/). # test that this doesn't get ignored
+          with_ensure(/present/)
+        }
         it { should contain_user('www-data') }
       end
     end
