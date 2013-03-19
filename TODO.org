@@ -68,7 +68,7 @@ Puppet::Test::TestHelper to tear down Puppet.settings after each test.
 
 That's not so cool :(
 
-** TODO Rename
+** DONE Rename
 ** TODO implementation-independent dependency assertions
 ** TODO Test standalone puppet modules
 ** TODO better test output for files with large content
