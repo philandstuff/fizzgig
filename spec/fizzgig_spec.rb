@@ -57,6 +57,19 @@ describe Fizzgig do
     let(:stubs) { {} }
     let(:facts) { {} }
 
+    describe 'params' do
+      context 'when specifying one parameter' do
+        let(:code) { %q[params_test {'foo': param => 'bar'}] }
+        it { should contain_file('foo-param').with_source('bar') }
+        it { should contain_notify('foo-default').with_message('default_val') }
+      end
+      context 'when specifying both paramaters' do
+        let(:code) { %q[params_test {'foo': param => 'bar', param_with_default => 'baz'}] }
+        it { should contain_file('foo-param').with_source('bar') }
+        it { should contain_notify('foo-default').with_message('baz') }
+      end
+    end
+
     describe 'nginx::site' do
       context 'basic functionality' do
         let(:code) { %q[nginx::site {'foo': content => 'dontcare'}] }
