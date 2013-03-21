@@ -11,6 +11,13 @@ describe Fizzgig do
       let(:classname) {'webapp'}
 
       it { should contain_nginx__site('webapp') }
+      it 'should check multiple matchers for a single parameter' do
+        should contain_file('/etc/nginx/nginx.conf').
+          with_content(/fee fie foe fum/)
+        should_not contain_file('/etc/nginx/nginx.conf').
+          with_content(/pattern not present in file/).
+          with_content(/fee fie foe fum/)
+      end
     end
 
     describe 'functions::class_test' do
@@ -67,21 +74,6 @@ describe Fizzgig do
         let(:code) { %q[params_test {'foo': param => 'bar', param_with_default => 'baz'}] }
         it { should contain_file('foo-param').with_source('bar') }
         it { should contain_notify('foo-default').with_message('baz') }
-      end
-    end
-
-    describe 'nginx::site' do
-      context 'basic functionality' do
-        let(:code) { %q[nginx::site {'foo': content => 'dontcare'}] }
-        it { should contain_file('/etc/nginx/sites-enabled/foo').
-          with_ensure('present').
-          with_mode('0440')
-        }
-        it { should_not contain_file('/etc/nginx/sites-enabled/foo').
-          with_ensure(/text not present/). # test that this doesn't get ignored
-          with_ensure(/present/)
-        }
-        it { should contain_user('www-data') }
       end
     end
 
