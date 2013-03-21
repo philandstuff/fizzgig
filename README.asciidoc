@@ -5,7 +5,7 @@ Fizzgig is a library to help write fast unit tests.
 
 [source,ruby]
 -------------------------------------------
-\include::spec/example_spec.rb
+\include::spec/example_spec.rb[]
 -------------------------------------------
 
 Basic Functionality
