@@ -1,9 +1,10 @@
-define nginx::site ($content) {
-  file {"/etc/nginx/sites-enabled/$title":
+define nginx::site () {
+  file {"/etc/nginx/sites-available/$title":
     ensure  => present,
-    mode    => 0440,
     content => template('nginx/vhost.erb'),
   }
-  user {'www-data':
+  file {"/etc/nginx/sites-enabled/$title":
+    ensure  => link,
+    target  => "/etc/nginx/sites-available/${title}",
   }
 }
