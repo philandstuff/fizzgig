@@ -75,6 +75,7 @@ That's not so cool :(
 ** TODO better test output for files with large content
 ** TODO Test puppet types (ie from lib/puppet/parser/types)
 ** TODO Test templates in isolation
+maybe testing functions more generally?
 ** TODO Test custom facts
 ** TODO Virtual/exported resources
 @dcarley's trick of using a precondition with a collector might be
