@@ -44,7 +44,7 @@ Can we isolate the compiler from the settings?
 
 Answer seems to be yes -- use puppetlabs_spec_helper or directly
 Puppet::Test::TestHelper to tear down Puppet.settings after each test.
-** TODO Ensure that modulepath can take multiple directories
+** DONE Ensure that modulepath can take multiple directories
    - in govuk/puppet, we had trouble having multiple directories on
      the module path, so we ended up doing this:
 
