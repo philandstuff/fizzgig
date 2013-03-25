@@ -77,6 +77,8 @@ That's not so cool :(
 ** TODO Test templates in isolation
 ** TODO Test custom facts
 ** TODO Virtual/exported resources
+@dcarley's trick of using a precondition with a collector might be
+helpful here
 ** TODO Parameterized classes
 ** TODO Preconditions (do I actually want this?)
 ** TODO nodes
