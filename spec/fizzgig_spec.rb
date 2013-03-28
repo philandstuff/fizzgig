@@ -112,4 +112,11 @@ describe Fizzgig do
       it { should contain_notify('qualified-fact-test').with_message('cse ungraded in metalwork') }
     end
   end
+
+  describe '#node' do
+    subject { Fizzgig.node('foo.com') }
+    it {
+#      require 'pp'; pp subject
+      should contain_nginx__site('foo.com') }
+  end
 end

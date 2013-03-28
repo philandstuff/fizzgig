@@ -70,6 +70,9 @@ That's not so cool :(
 
 ** DONE Rename
 ** DONE functions with multiple arguments
+** DONE nodes
+See govuk_nodes_spec_optional for examples of this.
+the rspec-puppet equivalent is :type => :host
 ** TODO implementation-independent dependency assertions
 ** TODO Test standalone puppet modules
 ** TODO better test output for files with large content
@@ -82,6 +85,3 @@ maybe testing functions more generally?
 helpful here
 ** TODO Parameterized classes
 ** TODO Preconditions (do I actually want this?)
-** TODO nodes
-See govuk_nodes_spec_optional for examples of this.
-the rspec-puppet equivalent is :type => :host

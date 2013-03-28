@@ -23,8 +23,18 @@ module Fizzgig
     end
   end
 
-  def self.make_compiler(facts)
-    node = Puppet::Node.new('localhost')
+  def self.node(hostname,options = {})
+    LSpace.with(:function_stubs => options[:stubs]) do
+      setup_puppet
+      Puppet[:code] = '' # we want puppet to import the Puppet[:manifest] file
+      compiler = make_compiler(options[:facts], hostname)
+      compiler.send :evaluate_ast_node
+      compiler.catalog
+    end
+  end
+
+  def self.make_compiler(facts,hostname='localhost')
+    node = Puppet::Node.new(hostname)
     node.merge(facts) if facts
     compiler = Puppet::Parser::Compiler.new(node)
     compiler.send :set_node_parameters
@@ -50,6 +60,7 @@ module Fizzgig
   def self.setup_puppet
     Puppet[:code] = ' ' # hack to suppress puppet from looking at Puppet[:manifest]
     Puppet[:modulepath] = RSpec.configuration.modulepath
+    Puppet[:manifestdir] = RSpec.configuration.manifestdir
     # stop template() fn from complaining about missing vardir config
     Puppet[:vardir] ||= ""
   end
@@ -57,9 +68,9 @@ end
 
 RSpec.configure do |c|
   c.add_setting :modulepath, :default => '/etc/puppet/modules'
+  c.add_setting :manifestdir, :default => nil
 
   # FIXME: decide if these are needed
-  #c.add_setting :manifestdir, :default => nil
   #c.add_setting :manifest, :default => nil
   #c.add_setting :template_dir, :default => nil
   #c.add_setting :config, :default => nil

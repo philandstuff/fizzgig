@@ -1,3 +1,7 @@
+# 0.2.1
+
+  * Added support for evaluating nodes using Fizzgig.node(hostname)
+
 # 0.2.0
 
   * Changed function stubs to allow multi-arg functions. This broke
