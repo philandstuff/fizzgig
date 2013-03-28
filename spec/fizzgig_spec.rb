@@ -114,7 +114,20 @@ describe Fizzgig do
   end
 
   describe '#node' do
-    subject { Fizzgig.node('foo.com') }
-    it { should contain_nginx__site('foo.com') }
+    subject { Fizzgig.node(hostname, :facts => facts) }
+    let(:facts) { {} }
+    context 'simple node' do
+      let(:hostname) {'foo.com'}
+      it { should contain_nginx__site('foo.com') }
+    end
+    context 'default node' do
+      let(:hostname) {'foo.invalid'}
+      it { should contain_notify('oops, default') }
+    end
+    context 'node with facts specified' do
+      let(:hostname) {'fact.com'}
+      let(:facts) { { 'fact_site' => 'facts.org' } }
+      it { should contain_nginx__site('facts.org') }
+    end
   end
 end
