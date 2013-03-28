@@ -115,8 +115,6 @@ describe Fizzgig do
 
   describe '#node' do
     subject { Fizzgig.node('foo.com') }
-    it {
-#      require 'pp'; pp subject
-      should contain_nginx__site('foo.com') }
+    it { should contain_nginx__site('foo.com') }
   end
 end
