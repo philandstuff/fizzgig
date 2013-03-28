@@ -3,11 +3,11 @@ module Fizzgig::FunctionStubs
   def self.has_stub?(fname,args)
     stubs = LSpace[:function_stubs] || {}
     stubs.has_key?(fname.to_sym) &&
-      stubs[fname.to_sym].has_key?(args[0])
+      stubs[fname.to_sym].has_key?(args)
   end
 
   def self.get_stub(fname,args)
-    LSpace[:function_stubs][fname.to_sym][args[0]]
+    LSpace[:function_stubs][fname.to_sym][args]
   end
 end
 

@@ -23,7 +23,7 @@ describe Fizzgig do
     describe 'functions::class_test' do
       let(:classname) {'functions::class_test'}
       context 'with extlookup stubbed out' do
-        let(:stubs) { {:extlookup => {'ssh-key-barry' => 'the key of S'}} }
+        let(:stubs) { {:extlookup => {['ssh-key-barry'] => 'the key of S'}} }
         it { should contain_ssh_authorized_key('barry').with_key('the key of S') }
       end
 
@@ -39,10 +39,19 @@ describe Fizzgig do
       let(:classname) {'functions::recursive_extlookup_test'}
       let(:stubs) {
         {:extlookup =>
-          { 'ssh-key-barry' => 'rsa-key-barry',
-            'rsa-key-barry' => 'the key of S'}}
+          { ['ssh-key-barry'] => 'rsa-key-barry',
+            ['rsa-key-barry'] => 'the key of S'}}
       }
       it { should contain_ssh_authorized_key('barry').with_key('the key of S') }
+    end
+
+    describe 'functions::function_with_multiple_arguments' do
+      let(:classname) {'functions::function_with_multiple_arguments'}
+      let(:stubs) {
+        {:hiera =>
+          {['hiera_key','default value'] => 'correct result'}}
+      }
+      it { should contain_file('/tmp/multiarg_fn_test').with_content('correct result') }
     end
 
     describe 'facts::class_test' do
@@ -87,7 +96,7 @@ describe Fizzgig do
     end
 
     context 'functions::define_test with function stubs' do
-      let(:stubs) { {:extlookup => {'ssh-key-barry' => 'the key of S'}} }
+      let(:stubs) { {:extlookup => {['ssh-key-barry'] => 'the key of S'}} }
       let(:code) { %[functions::define_test{'foo': }] }
       it { should contain_ssh_authorized_key('barry').with_key('the key of S') }
     end
