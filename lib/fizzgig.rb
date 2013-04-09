@@ -3,13 +3,32 @@ require 'fizzgig/matchers'
 require 'fizzgig/function_stubs'
 require 'lspace'
 
+class Puppet::Resource::TypeCollection
+  alias_method :find_or_load_real, :find_or_load
+  def find_or_laod(namespaces, name, type)
+    $stderr.puts "Resourcing #{name} #{type} in #{namespaces}"
+    find_or_load_real(namespaces,name,type)
+  end
+end
+
 module Fizzgig
-  def self.instantiate(code,options = {})
+  def self.instantiate(type,title,params={},options = {})
     LSpace.with(:function_stubs => options[:stubs]) do
       setup_puppet
       compiler = make_compiler(options[:facts])
-      resources = compile(code,compiler)
-      resources[0].evaluate
+      scope = compiler.newscope(nil)
+      scope.source = Puppet::Resource::Type.new(:node,'localhost')
+      # we need to force loading the type; normally this would be
+      # handled by Puppet::Parser::AST::Resource calling
+      # scope.resolve_type_and_titles
+      scope.find_defined_resource_type(type)
+
+      resource = Puppet::Parser::Resource.new(
+                     type,
+                     title,
+                     :scope => scope,
+                     :parameters => munge_params(params))
+      resource.evaluate
       compiler.catalog
     end
   end
@@ -31,6 +50,10 @@ module Fizzgig
       compiler.send :evaluate_ast_node
       compiler.catalog
     end
+  end
+
+  def self.munge_params(params)
+    params.collect {|k,v| Puppet::Parser::Resource::Param.new(:name => k, :value => v)}
   end
 
   def self.make_compiler(facts,hostname='localhost')

@@ -69,26 +69,30 @@ describe Fizzgig do
   end
 
   describe '#instantiate' do
-    subject { Fizzgig.instantiate(code, :stubs => stubs, :facts => facts) }
+    subject { Fizzgig.instantiate(type, title, params, :stubs => stubs, :facts => facts) }
     let(:stubs) { {} }
     let(:facts) { {} }
+    let(:params) { {} }
 
     describe 'params' do
+      let(:type) {'params_test'}
+      let(:title) { 'foo' }
       context 'when specifying one parameter' do
-        let(:code) { %q[params_test {'foo': param => 'bar'}] }
+        let(:params) { {:param => 'bar'} }
         it { should contain_file('foo-param').with_source('bar') }
         it { should contain_notify('foo-default').with_message('default_val') }
       end
       context 'when specifying both paramaters' do
-        let(:code) { %q[params_test {'foo': param => 'bar', param_with_default => 'baz'}] }
+        let(:params) { {:param => 'bar', :param_with_default => 'baz'} }
         it { should contain_file('foo-param').with_source('bar') }
         it { should contain_notify('foo-default').with_message('baz') }
       end
     end
 
     describe 'nginx::simple_server' do
+      let(:type) {'nginx::simple_server'}
+      let(:title)    {'foo'}
       context 'basic functionality' do
-        let(:code) { %q[nginx::simple_server {'foo':}] }
         it { should contain_nginx__site('foo').
           with_content(/server_name foo;/)
         }
@@ -97,13 +101,14 @@ describe Fizzgig do
 
     context 'functions::define_test with function stubs' do
       let(:stubs) { {:extlookup => {['ssh-key-barry'] => 'the key of S'}} }
-      let(:code) { %[functions::define_test{'foo': }] }
+      let(:type) {'functions::define_test'}
+      let(:title) {'foo'}
       it { should contain_ssh_authorized_key('barry').with_key('the key of S') }
     end
 
     describe 'facts::define_test' do
-      let(:classname) {'facts::define_test'}
-      let(:code) {%q[facts::define_test{'test':}]}
+      let(:type) {'facts::define_test'}
+      let(:title) {'test'}
       let(:facts) {
         { 'unqualified_fact' => 'no qualifications',
           'qualified_fact'   => 'cse ungraded in metalwork'}
