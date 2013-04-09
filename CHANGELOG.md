@@ -1,3 +1,8 @@
+# 0.3.0
+
+  * Changed API for #instantiate to take ruby Hash of params rather
+    than String containing puppet code
+
 # 0.2.1
 
   * Added support for evaluating nodes using Fizzgig.node(hostname)
