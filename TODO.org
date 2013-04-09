@@ -73,6 +73,7 @@ That's not so cool :(
 ** DONE nodes
 See govuk_nodes_spec_optional for examples of this.
 the rspec-puppet equivalent is :type => :host
+** TODO implement defined types from ruby hashes
 ** TODO implementation-independent dependency assertions
 ** TODO Test standalone puppet modules
 ** TODO better test output for files with large content
