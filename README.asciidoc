@@ -26,7 +26,7 @@ which will instantiate a defined type and include a class
 respectively:
 
 [source,ruby]
-catalog = Fizzgig.instantiate %q[ nginx::site {'foo.com': max_age => 300 } ]
+catalog = Fizzgig.instantiate 'nginx::site', 'foo.com', { max_age => 300 }
 
 [source,ruby]
 catalog = Fizzgig.include 'nginx'
@@ -107,7 +107,7 @@ And I write this test:
 
 [source,ruby]
 -------------
-catalog Fizzgig.instantiate %q[ nginx::ssl_site{'foo': } ]
+catalog Fizzgig.instantiate 'nginx::ssl_site','foo'
 catalog.should contain_nginx__site('foo') # ok, will pass
 catalog.should contain_file('/etc/nginx/sites-enabled/foo') # ERROR, will fail
 -------------
