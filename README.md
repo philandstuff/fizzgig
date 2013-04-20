@@ -1,10 +1,8 @@
-Fizzgig
--------
+# Fizzgig
 
 Fizzgig is a library to help write fast unit tests.
 
-[source,ruby]
--------------------------------------------
+```ruby
 # See spec/example_spec.rb
 describe 'nginx::site' do
   include RSpec::Puppet::ManifestMatchers
@@ -18,79 +16,76 @@ describe 'nginx::site' do
          with_ensure('link').
          with_target('/etc/nginx/sites-available/www.foo.com') }
 end
--------------------------------------------
+```
 
-Basic Functionality
-~~~~~~~~~~~~~~~~~~~
+## Basic Functionality
 
-Fizzgig is based around two functions: +instantiate+ and +include+,
+Fizzgig is based around two functions: `instantiate` and `include`,
 which will instantiate a defined type and include a class
 respectively:
 
-[source,ruby]
+```ruby
 catalog = Fizzgig.instantiate 'nginx::site', 'foo.com', { max_age => 300 }
+```
 
-[source,ruby]
+```ruby
 catalog = Fizzgig.include 'nginx'
+```
 
 Each of these functions returns a Puppet::Resource::Catalog
 object. You can use the matchers in Fizzgig::CatalogMatchers to make
 assertions against the contents of this catalog:
 
-[source,ruby]
+```ruby
 catalog.should contain_file('/etc/nginx.conf').with_content(/ssl/)
+```
 
 Just like in rspec-puppet, you can assert the existence of defined
-types within your own modules by replacing +::+ with +__+ in the name:
+types within your own modules by replacing `::` with `__` in the name:
 
-[source,ruby]
+```ruby
 catalog.should contain_nginx__site('foo.com')
+```
 
-Stubbing facts
-~~~~~~~~~~~~~~
+## Stubbing facts
 
 Facts can be stubbed by passing a hash of fact values to instantiate
 or include:
 
-[source,ruby]
+```ruby
 Fizzgig.include('nginx',:facts => {'lsbdistcodename' => 'precise'})
+```
 
-Stubbing functions
-~~~~~~~~~~~~~~~~~~
+## Stubbing functions
 
 Custom functions can also be stubbed. This is very handy for stubbing
 out extdata or hieradata in tests:
 
-[source,ruby]
--------------
+```ruby
 Fizzgig.include('nginx',:stubs => {:extlookup => {'site_root' => 'www.foo.com'}})
   .should contain_file('/etc/nginx/sites-enabled/www.foo.com')
--------------
+```
 
-Rationale
-~~~~~~~~~
+## Rationale
 
 Fizzgig is designed to be fast, and to test individual units of code,
 as good unit tests do. However, existing puppet testing libraries such
-as https://github.com/rodjek/rspec-puppet[rspec-puppet] will compute a
-complete catalog, expanding out all classes and defined types until it
-reaches the individual base puppet types. This means that it can spend
-time computing resources which are wholly unrelated to the test you're
-writing.
+as [rspec-puppet][] will compute a complete catalog, expanding out all
+classes and defined types until it reaches the individual base puppet
+types. This means that it can spend time computing resources which are
+wholly unrelated to the test you're writing.
 
 Fizzgig, by contrast, treats defined types as black box abstractions:
 it only adds the defined types you declare within the class or define
 under test to the catalog. Types which are pulled in transitively by
 other types will not be added to the catalog.
 
-Defined types
-~~~~~~~~~~~~~
+### Defined types
 
 To achieve its isolation, fizzgig does not transitively evaluate
 defined types. Suppose I have these puppet defines:
 
-[source,puppet]
----------------
+```puppet
 define nginx::ssl_site () {
   nginx::site {$title:
   }
@@ -103,19 +98,18 @@ define nginx::site () {
     # ...
   }
 }
----------------
+```
 
 And I write this test:
 
-[source,ruby]
--------------
+```ruby
 catalog Fizzgig.instantiate 'nginx::ssl_site','foo'
 catalog.should contain_nginx__site('foo') # ok, will pass
 catalog.should contain_file('/etc/nginx/sites-enabled/foo') # ERROR, will fail
--------------
+```
 
 Because the file resource is not directly referenced by
-+nginx::ssl_site+ but only transitively by +nginx::site+, Fizzgig will
+`nginx::ssl_site` but only transitively by `nginx::site`, Fizzgig will
 not add it to the catalog. This means that Fizzgig will only test the
 direct effects of the type under test, not of its collaborators.
 
@@ -126,20 +120,22 @@ a patch release of puppet may, in principle, cause fizzgig to
 break. Fizzgig is not currently supported in any way by
 puppetlabs. Use at your own risk.
 
-Installation
-~~~~~~~~~~~~
+## Installation
 
 Add the following to your Gemfile:
 
-[source,ruby]
+```ruby
 gem "fizzgig"
+```
 
 Or just run:
 
-[source]
+```
 gem install fizzgig
+```
 
-Licence
-~~~~~~~
+## Licence
 
 MIT. See LICENSE for details.
+
+[rspec-puppet]: https://github.com/rodjek/rspec-puppet
