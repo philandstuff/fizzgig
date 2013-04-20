@@ -77,7 +77,6 @@ the rspec-puppet equivalent is :type => :host
 ** DONE update README to reflect defined type API change
 ** TODO implementation-independent dependency assertions
 ** TODO Test standalone puppet modules
-** TODO better test output for files with large content
 ** TODO Test puppet types (ie from lib/puppet/parser/types)
 ** TODO Test templates in isolation
 maybe testing functions more generally?
