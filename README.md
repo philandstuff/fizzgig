@@ -33,18 +33,12 @@ catalog = Fizzgig.include 'nginx'
 ```
 
 Each of these functions returns a Puppet::Resource::Catalog
-object. You can use the matchers in Fizzgig::CatalogMatchers to make
-assertions against the contents of this catalog:
+object. This means you can use the matchers from rspec-puppet in
+RSpec::Puppet::ManifestMatchers to make assertions against the
+contents of this catalog:
 
 ```ruby
 catalog.should contain_file('/etc/nginx.conf').with_content(/ssl/)
-```
-
-Just like in rspec-puppet, you can assert the existence of defined
-types within your own modules by replacing `::` with `__` in the name:
-
-```ruby
-catalog.should contain_nginx__site('foo.com')
 ```
 
 ## Stubbing facts
@@ -79,8 +73,6 @@ Fizzgig, by contrast, treats defined types as black box abstractions:
 it only adds the defined types you declare within the class or define
 under test to the catalog. Types which are pulled in transitively by
 other types will not be added to the catalog.
-
-### Defined types
 
 To achieve its isolation, fizzgig does not transitively evaluate
 defined types. Suppose I have these puppet defines:
