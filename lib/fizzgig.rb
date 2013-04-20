@@ -1,5 +1,4 @@
 require 'puppet'
-require 'fizzgig/matchers'
 require 'fizzgig/function_stubs'
 require 'lspace'
 

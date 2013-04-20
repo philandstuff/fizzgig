@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = 'fizzgig'
-  s.version = '0.3.0'
+  s.version = '0.4.0'
   s.homepage = 'https://github.com/philandstuff/fizzgig'
   s.summary = 'Tools for writing fast unit tests for Puppet'
   s.description = 'Tools for writing fast unit tests for Puppet'
@@ -11,6 +11,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'puppet'
   s.add_dependency 'lspace'
   s.add_development_dependency 'rspec'
+  s.add_development_dependency 'rspec-puppet'
 
   s.authors = ['Philip Potter']
   s.email = 'philip.g.potter@gmail.com'
