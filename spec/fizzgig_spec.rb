@@ -2,8 +2,9 @@ require 'spec_helper'
 require 'fizzgig'
 
 describe Fizzgig do
+  let(:fizzgig) { Fizzgig.new({modulepath: MODULEPATH, manifestdir: MANIFESTDIR}) }
   describe '#include' do
-    subject { Fizzgig.include(classname, :stubs => stubs, :facts => facts) }
+    subject { fizzgig.include(classname, :stubs => stubs, :facts => facts) }
     let(:stubs) { {} }
     let(:facts) { {} }
 
@@ -69,7 +70,7 @@ describe Fizzgig do
   end
 
   describe '#instantiate' do
-    subject { Fizzgig.instantiate(type, title, params, :stubs => stubs, :facts => facts) }
+    subject { fizzgig.instantiate(type, title, params, :stubs => stubs, :facts => facts) }
     let(:stubs) { {} }
     let(:facts) { {} }
     let(:params) { {} }
@@ -119,7 +120,7 @@ describe Fizzgig do
   end
 
   describe '#node' do
-    subject { Fizzgig.node(hostname, :facts => facts) }
+    subject { fizzgig.node(hostname, :facts => facts) }
     let(:facts) { {} }
     context 'simple node' do
       let(:hostname) {'foo.com'}

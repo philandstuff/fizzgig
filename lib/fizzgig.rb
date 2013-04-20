@@ -27,7 +27,7 @@ class Fizzgig
 
   def self.include(klass,options = {})
     LSpace.with(:function_stubs => options[:stubs]) do
-      setup_fizzgig
+      setup_fizzgig({modulepath: options[:modulepath],manifestdir: options[:manifestdir]})
       compiler = make_compiler(options[:facts])
       compile("include #{klass}",compiler)
       compiler.catalog
@@ -36,7 +36,7 @@ class Fizzgig
 
   def self.node(hostname,options = {})
     LSpace.with(:function_stubs => options[:stubs]) do
-      setup_fizzgig
+      setup_fizzgig({modulepath: options[:modulepath],manifestdir: options[:manifestdir]})
       Puppet[:code] = '' # we want puppet to import the Puppet[:manifest] file
       compiler = make_compiler(options[:facts], hostname)
       compiler.send :evaluate_ast_node
@@ -74,28 +74,32 @@ class Fizzgig
 
   def self.setup_fizzgig(settings={})
     Puppet[:code] = ' ' # hack to suppress puppet from looking at Puppet[:manifest]
-    Puppet[:modulepath] = settings[:modulepath] || RSpec.configuration.modulepath
-    Puppet[:manifestdir] = settings[:manifestdir] || RSpec.configuration.manifestdir
+    Puppet[:modulepath] = settings[:modulepath] || '/etc/puppet/modules'
+    Puppet[:manifestdir] = settings[:manifestdir] || nil
     # stop template() fn from complaining about missing vardir config
     Puppet[:vardir] ||= ""
+    # FIXME: decide if these are needed
+    #c.add_setting :manifest, :default => nil
+    #c.add_setting :template_dir, :default => nil
+    #c.add_setting :config, :default => nil
   end
+
+  # ===== OO interface ======
+  # basically a glorified curried function to store the configuration
 
   def initialize(settings={})
     @modulepath  = settings[:modulepath]
     @manifestdir = settings[:manifestdir]
   end
 
-  def instantiate(type,title,params)
-    Fizzgig.instantiate(type,title,params,{modulepath: @modulepath, manifestdir: @manifestdir})
+  def instantiate(type,title,params,options={})
+    Fizzgig.instantiate(type,title,params,options.merge({modulepath: @modulepath, manifestdir: @manifestdir}))
   end
-end
 
-RSpec.configure do |c|
-  c.add_setting :modulepath, :default => '/etc/puppet/modules'
-  c.add_setting :manifestdir, :default => nil
-
-  # FIXME: decide if these are needed
-  #c.add_setting :manifest, :default => nil
-  #c.add_setting :template_dir, :default => nil
-  #c.add_setting :config, :default => nil
+  def include(classname,options={})
+    Fizzgig.include(classname,options.merge({modulepath: @modulepath, manifestdir: @manifestdir}))
+  end
+  def node(hostname,options={})
+    Fizzgig.node(hostname,options.merge({modulepath: @modulepath, manifestdir: @manifestdir}))
+  end
 end
