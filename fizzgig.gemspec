@@ -12,6 +12,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'lspace'
   s.add_development_dependency 'rspec'
   s.add_development_dependency 'rspec-puppet'
+  s.add_development_dependency 'puppetlabs_spec_helper'
 
   s.authors = ['Philip Potter']
   s.email = 'philip.g.potter@gmail.com'

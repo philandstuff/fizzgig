@@ -1,7 +1,9 @@
 require 'spec_helper'
 require 'fizzgig'
+require 'rspec-puppet'
 
 describe Fizzgig do
+  include RSpec::Puppet::ManifestMatchers
   let(:fizzgig) { Fizzgig.new({modulepath: MODULEPATH, manifestdir: MANIFESTDIR}) }
   describe '#include' do
     subject { fizzgig.include(classname, :stubs => stubs, :facts => facts) }
