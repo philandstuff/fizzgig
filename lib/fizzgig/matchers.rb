@@ -1,5 +1,5 @@
 require 'rspec'
-module Fizzgig
+class Fizzgig
   module CatalogMatchers
     extend RSpec::Matchers::DSL
 

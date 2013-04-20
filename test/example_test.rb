@@ -8,7 +8,8 @@ MANIFESTDIR = File.join(HERE,'../spec/manifests')
 
 class TestNginxSite < MiniTest::Unit::TestCase
   def setup
-    @catalog = Fizzgig.instantiate 'nginx::site','www.foo.com',{},{modulepath: MODULEPATH, manifestdir: MANIFESTDIR}
+    @fizzgig = Fizzgig.new({modulepath: MODULEPATH, manifestdir: MANIFESTDIR})
+    @catalog = @fizzgig.instantiate 'nginx::site','www.foo.com',{}
   end
 
   def test_has_sites_available_file

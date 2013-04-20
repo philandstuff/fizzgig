@@ -3,7 +3,7 @@ require 'fizzgig/matchers'
 require 'fizzgig/function_stubs'
 require 'lspace'
 
-module Fizzgig
+class Fizzgig
   def self.instantiate(type,title,params,options = {})
     LSpace.with(:function_stubs => options[:stubs]) do
       setup_fizzgig({modulepath: options[:modulepath],manifestdir: options[:manifestdir]})
@@ -78,6 +78,15 @@ module Fizzgig
     Puppet[:manifestdir] = settings[:manifestdir] || RSpec.configuration.manifestdir
     # stop template() fn from complaining about missing vardir config
     Puppet[:vardir] ||= ""
+  end
+
+  def initialize(settings={})
+    @modulepath  = settings[:modulepath]
+    @manifestdir = settings[:manifestdir]
+  end
+
+  def instantiate(type,title,params)
+    Fizzgig.instantiate(type,title,params,{modulepath: @modulepath, manifestdir: @manifestdir})
   end
 end
 
