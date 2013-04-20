@@ -3,6 +3,15 @@
     * Removed RSpec.configure interface
     * Added OO interface to Fizzgig to allow storing configuration in
       the Fizzgig instance
+  * Removed RSpec matchers; you can use the matchers from rspec-puppet
+    instead:
+
+```ruby
+  require 'rspec-puppet/matchers'
+  RSpec.configure do |c|
+    c.include RSpec::Puppet::ManifestMatchers
+  end
+```
 
 # 0.3.0
 
