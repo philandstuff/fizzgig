@@ -95,7 +95,7 @@ define nginx::site () {
 And I write this test:
 
 ```ruby
-catalog Fizzgig.instantiate 'nginx::ssl_site','foo'
+catalog = Fizzgig.instantiate 'nginx::ssl_site','foo'
 catalog.should contain_nginx__site('foo') # ok, will pass
 catalog.should contain_file('/etc/nginx/sites-enabled/foo') # ERROR, will fail
 ```
