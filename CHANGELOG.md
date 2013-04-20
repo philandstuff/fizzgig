@@ -1,3 +1,9 @@
+# 0.4.0
+  * Changed configuration style:
+    * Removed RSpec.configure interface
+    * Added OO interface to Fizzgig to allow storing configuration in
+      the Fizzgig instance
+
 # 0.3.0
 
   * Changed API for #instantiate to take ruby Hash of params rather
