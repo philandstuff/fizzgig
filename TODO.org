@@ -74,7 +74,7 @@ That's not so cool :(
 See govuk_nodes_spec_optional for examples of this.
 the rspec-puppet equivalent is :type => :host
 ** DONE implement defined types from ruby hashes
-** TODO update README to reflect defined type API change
+** DONE update README to reflect defined type API change
 ** TODO implementation-independent dependency assertions
 ** TODO Test standalone puppet modules
 ** TODO better test output for files with large content
