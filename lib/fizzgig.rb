@@ -12,7 +12,7 @@ class Puppet::Resource::TypeCollection
 end
 
 module Fizzgig
-  def self.instantiate(type,title,params={},options = {})
+  def self.instantiate(type,title,params,options = {})
     LSpace.with(:function_stubs => options[:stubs]) do
       setup_fizzgig({modulepath: options[:modulepath],manifestdir: options[:manifestdir]})
       compiler = make_compiler(options[:facts])
