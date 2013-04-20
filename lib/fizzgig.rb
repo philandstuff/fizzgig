@@ -3,14 +3,6 @@ require 'fizzgig/matchers'
 require 'fizzgig/function_stubs'
 require 'lspace'
 
-class Puppet::Resource::TypeCollection
-  alias_method :find_or_load_real, :find_or_load
-  def find_or_laod(namespaces, name, type)
-    $stderr.puts "Resourcing #{name} #{type} in #{namespaces}"
-    find_or_load_real(namespaces,name,type)
-  end
-end
-
 module Fizzgig
   def self.instantiate(type,title,params,options = {})
     LSpace.with(:function_stubs => options[:stubs]) do
