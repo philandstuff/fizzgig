@@ -14,7 +14,7 @@ end
 module Fizzgig
   def self.instantiate(type,title,params={},options = {})
     LSpace.with(:function_stubs => options[:stubs]) do
-      setup_puppet
+      setup_fizzgig({modulepath: options[:modulepath],manifestdir: options[:manifestdir]})
       compiler = make_compiler(options[:facts])
       scope = compiler.newscope(nil)
       scope.source = Puppet::Resource::Type.new(:node,'localhost')
@@ -35,7 +35,7 @@ module Fizzgig
 
   def self.include(klass,options = {})
     LSpace.with(:function_stubs => options[:stubs]) do
-      setup_puppet
+      setup_fizzgig
       compiler = make_compiler(options[:facts])
       compile("include #{klass}",compiler)
       compiler.catalog
@@ -44,7 +44,7 @@ module Fizzgig
 
   def self.node(hostname,options = {})
     LSpace.with(:function_stubs => options[:stubs]) do
-      setup_puppet
+      setup_fizzgig
       Puppet[:code] = '' # we want puppet to import the Puppet[:manifest] file
       compiler = make_compiler(options[:facts], hostname)
       compiler.send :evaluate_ast_node
@@ -80,10 +80,10 @@ module Fizzgig
     parser.parse(code)
   end
 
-  def self.setup_puppet
+  def self.setup_fizzgig(settings={})
     Puppet[:code] = ' ' # hack to suppress puppet from looking at Puppet[:manifest]
-    Puppet[:modulepath] = RSpec.configuration.modulepath
-    Puppet[:manifestdir] = RSpec.configuration.manifestdir
+    Puppet[:modulepath] = settings[:modulepath] || RSpec.configuration.modulepath
+    Puppet[:manifestdir] = settings[:manifestdir] || RSpec.configuration.manifestdir
     # stop template() fn from complaining about missing vardir config
     Puppet[:vardir] ||= ""
   end
